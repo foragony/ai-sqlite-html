@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+    <title>AI project:数据库的CURD from 1851995</title>
+    <script src = "./lib/vue.js"></script>
+    <script src = "./lib/vue-resource.min.js"></script>
+    <script src="./lib/axios.min.js"></script>
+    <link rel="stylesheet" href="./lib/bootstrap.min.css">
+</head>
+<body>
+    <div>
+        <h1 class="text-center">AI project:数据库的CURD</h1>        
+        </div>
+    </div>
+    <div id="app">
+       <p class="text-center">刘佳航 1851995</p>
+       <div>
+        <div class="panel-body form-inline col-md-offset-1">
+
+            <label style="margin: auto;">
+                id:
+                <input type="text" name="id" id="input" class="form-control" v-model="id">
+                name:
+                <input type="text" name="name" id="input" class="form-control" v-model="name">
+                x:
+                <input type="text" name="x" id="input" class="form-control" v-model="x">
+                y:
+                <input type="text" name="y" id="input" class="form-control" v-model="y">
+                state:
+                <input type="text" name="state" id="input" class="form-control" v-model="state">
+            </label>
+
+
+            <label>
+                <div>
+                    <button type="button" class="btn btn-primary" @click="add">添加</button>
+                </div>
+            </label>
+
+        </div>
+       </div>
+
+        <table class="table table-bordered table-hover " style="margin: auto; width: 70%; height: auto;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>name</th>
+                    <th>x</th>
+                    <th>y</th>
+                    <th>state</th>
+                    <th>Operation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in list" :key="item.id">
+                    <td>{{item.id}}</td>
+                    <td>{{item.name}}</td>
+                    <td>{{item.x}}</td>
+                    <td>{{item.y}}</td>
+                    <td>{{item.state}}</td>
+                    <td>
+                    <button type="button" class="btn btn-primary" @click.prevent="del(item.id)">删除</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="panel-body form-inline col-md-offset-1 col-lg-offset-4col-xl-offset-4" >
+
+            <label>
+                修改id:
+                <input type="text" name="id" id="input" class="form-control" v-model="id">
+                修改项:
+                <input type="text" name="form" id="input" class="form-control" v-model="form">
+                修改值:
+                <input type="text" name="value" id="input" class="form-control" v-model="value">
+            </label>
+
+            <label>
+                <div>
+                    <button type="button" class="btn btn-primary" @click="change">修改</button>
+                </div>
+            </label>
+
+        </div>
+    </div>
+    
+    
+    
+
+
+    <script>
+        var vm = new Vue({
+            el: '#app',
+
+            data: {
+               id : '',
+               name : '',
+               x : '',
+               y : '',
+               state : '', 
+               form : '',
+               value : '',
+               list : [
+                   { id : 1, name : 'CHARLIE', x : '1', y : '2',state : '1'}
+               ]
+                    },
+
+            created(){
+                this.getlist()
+            },
+
+            methods:{
+                add(){
+                    axios.post('http://127.0.0.1:5000//POST/item',
+                    {id: this.id,
+                    name: this.name,
+                    x: this.x,
+                    y: this.y,
+                    state: this.state},{emulateJSON:true}).then(result=>{
+                        if(result.data.status === 0)
+                        this.getlist()
+                        })
+
+                },
+
+                getlist(){
+                    axios.get('http://127.0.0.1:5000//GET/data').then(result=>{
+                        this.list=result.data;
+                        console.log(result);
+                        console.log('success');
+                        
+                    })
+                },
+
+                del(id){
+                    axios.get('http://127.0.0.1:5000/DELETE/'+id).then(result=>{
+                        if(result.data.status === 0)
+                        this.getlist()
+                        
+                    })
+                },
+
+                change(){
+                    axios.post('http://127.0.0.1:5000//PUT/item',
+                    {id: this.id,
+                    form: this.form,
+                    value: this.value},{emulateJSON:true}).then(result=>{
+                        if(result.data.status === 0)
+                        this.getlist()
+                        })
+                }
+            }
+        })
+    </script>
+</body>
+</html>
